@@ -1,4 +1,4 @@
-package battleShips;
+package UI;
 
 import java.io.IOException;
 
@@ -9,10 +9,11 @@ public class Board {
 	public static int maximunSize = 26;
 	
 	// Attributes:
+	@SuppressWarnings("unused")
 	private String name;
 	private int size;
-	private char[][] ships;
-	private boolean[][] hits;
+	private Character[][] ships;
+	private Boolean[][] hits;
 	
 	public Board(String name, int size) {
 		this.name = name;
@@ -20,8 +21,8 @@ public class Board {
 			this.size = maximunSize;
 		else
 			this.size = size;
-		this.ships = new char[size][size];
-		this.hits = new boolean[size][size];
+		this.ships = new Character[size][size];
+		this.hits = new Boolean[size][size];
 		for(int i = 0; i < size; i++) {
 			for(int k = 0; k < size; k++) {
 				ships[i][k] = '.';
