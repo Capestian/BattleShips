@@ -3,6 +3,7 @@ package ship;
 public abstract class AbstractShip {
 	// Constants:
 	// Attributes:
+	@SuppressWarnings("unused")
 	private String name;
 	private Character label;
 	private int length;

@@ -1,5 +1,5 @@
 package ship;
 
 public enum Orientation {
-North, South, East, West
+NORTH, EAST, SOUTH, WEST
 }
