@@ -1,12 +1,10 @@
 package ship;
 
 public abstract class AbstractShip {
-	// Constants:
-	// Attributes:
-	@SuppressWarnings("unused")
 	private String name;
 	private Character label;
 	private int length;
+	private int strikeCount;
 	private Orientation orientation;
 
 	public AbstractShip(String name, Character label, int length, Orientation orientation) {
@@ -25,6 +23,15 @@ public abstract class AbstractShip {
 	public int getLength() {
 		return length;
 	}
+	
+	public void addStrike() {
+		strikeCount++;
+	}
+	
+	public boolean isSunk() {
+		return strikeCount >= length;
+	}
+	
 	public Orientation getOrientation() {
 		return orientation;
 	}

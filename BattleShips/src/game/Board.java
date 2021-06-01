@@ -19,7 +19,7 @@ public class Board implements IBoard {
 	@SuppressWarnings("unused")
 	private String name;
 	private int size;
-	private Character[][] ships;
+	private ShipState[][] ships;
 	private Boolean[][] hits;
 
 	public Board(String name, int size) {
@@ -28,12 +28,12 @@ public class Board implements IBoard {
 			this.size = maximunSize;
 		else
 			this.size = size;
-		this.ships = new Character[this.size][this.size];
+		this.ships = new ShipState[this.size][this.size];
 		this.hits = new Boolean[this.size][this.size];
 		for (int i = 0; i < this.size; i++) {
 			for (int k = 0; k < this.size; k++) {
-				ships[i][k] = seaChar;
 				hits[i][k] = false;
+				ships[i][k] = new ShipState();
 			}
 		}
 	}
@@ -99,48 +99,49 @@ public class Board implements IBoard {
 			if (y - ship.getLength() + 1 < 0)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x][y - i] != seaChar)
+				if(ships[x][y - i].getShip() != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x][y - i] = ship.getLabel();
+				ships[x][y - i].setShip(ship);
 			break;
 		case EAST:
 			if (x + ship.getLength() - 1 >= size)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x + i][y] != seaChar)
+				if(ships[x + i][y].getShip() != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x + i][y] = ship.getLabel();
+				ships[x + i][y].setShip(ship);
 			break;
 		case SOUTH:
 			if (y + ship.getLength() - 1 >= size)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x][y + i] != seaChar)
+				if(ships[x][y + i].getShip() != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x][y + i] = ship.getLabel();
+				ships[x][y + i].setShip(ship);
 			break;
 		case WEST:
 			if (x - ship.getLength() + 1 < 0)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x - i][y] != seaChar)
+				if(ships[x - i][y].getShip() != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x - i][y] = ship.getLabel();
+				ships[x - i][y].setShip(ship);
 			break;
 		}
 	}
 
 	@Override
 	public boolean hasShip(int x, int y) {
-		return ships[x][y] != seaChar;
+		return ships[x][y].getShip() != null;
 	}
 
 	@Override
 	public void setHit(boolean hit, int x, int y) {
+		ships[x][y].addStrike();
 		hits[x][y] = true;
 	}
 
@@ -151,7 +152,8 @@ public class Board implements IBoard {
 
 	public static void main(String[] args) {
 		Board board = new Board("Bataille navale", 12);
-		AbstractShip[] ships = { new Destroyer("Destroyer", 'd'), new Submarine("Submarine A", 's'), new Submarine("Submarine B", 's'), new BattleShip("BattleShip", 'b'), new Carrier("Carrier", 'c') };
+//		AbstractShip[] ships = { new Destroyer("Destroyer", 'd'), new Submarine("Submarine A", 's'), new Submarine("Submarine B", 's'), new BattleShip("BattleShip", 'b'), new Carrier("Carrier", 'c') };
+		AbstractShip[] ships = { new Destroyer("Destroyer", 'd') };
 		int i = 0;
 		boolean done = false;
 		board.print();
@@ -169,5 +171,10 @@ public class Board implements IBoard {
 			}
 			board.print();
 		} while (!done);
+		board.setHit(false, 1, 0);
+		System.out.println(ships[0].isSunk());
+		board.setHit(false, 0, 0);
+		System.out.println(ships[0].isSunk());
+		board.print();
 	}
 }
