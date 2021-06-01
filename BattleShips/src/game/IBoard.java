@@ -15,8 +15,9 @@ public interface IBoard {
      * @param ship The ship to place on the board
      * @param x
      * @param y
+     * @throws BoardException 
      */
-    void putShip(AbstractShip ship, int x, int y);
+    void putShip(AbstractShip ship, int x, int y) throws BoardException;
 
     /**
      * @param x

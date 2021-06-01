@@ -15,7 +15,10 @@ public abstract class AbstractShip {
 		this.length = length;
 		this.orientation = orientation;
 	}
-	
+
+	public String getName() {
+		return name;
+	}
 	public Character getLabel() {
 		return label;
 	}
