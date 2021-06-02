@@ -23,7 +23,7 @@ public class ShipState {
 	}
 	
 	public void addStrike() {
-		if(!struck) {
+		if(ship != null && !struck) {
 			struck = true;
 			ship.addStrike();
 		}

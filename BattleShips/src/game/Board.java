@@ -142,7 +142,8 @@ public class Board implements IBoard {
 	@Override
 	public void setHit(boolean hit, int x, int y) {
 		ships[x][y].addStrike();
-		hits[x][y] = true;
+		if(ships[x][y].isStruck())
+			hits[x][y] = true;
 	}
 
 	@Override
@@ -150,7 +151,26 @@ public class Board implements IBoard {
 		return hits[x][y];
 	}
 
-	public static void main(String[] args) {
+	@Override
+	public Hit sendHit(int x, int y) {
+		setHit(true, x, y);
+		AbstractShip ship = ships[x][y].getShip();
+		if(ship == null)
+			return Hit.MISS;
+		if(!ship.isSunk())
+			return Hit.STIKE;
+		if(ship instanceof Destroyer)
+			return Hit.DESTROYER;
+		if(ship instanceof Submarine)
+			return Hit.SUBMARINE;
+		if(ship instanceof BattleShip)
+			return Hit.BATTLESHIP;
+		if(ship instanceof Carrier)
+			return Hit.CARRIER;
+		return null;
+	}
+
+	public static void testBoard() {
 		Board board = new Board("Bataille navale", 12);
 //		AbstractShip[] ships = { new Destroyer("Destroyer", 'd'), new Submarine("Submarine A", 's'), new Submarine("Submarine B", 's'), new BattleShip("BattleShip", 'b'), new Carrier("Carrier", 'c') };
 		AbstractShip[] ships = { new Destroyer("Destroyer", 'd') };
@@ -171,10 +191,16 @@ public class Board implements IBoard {
 			}
 			board.print();
 		} while (!done);
-		board.setHit(false, 1, 0);
+		board.sendHit(1, 0);
 		System.out.println(ships[0].isSunk());
-		board.setHit(false, 0, 0);
-		System.out.println(ships[0].isSunk());
+		Hit hit = board.sendHit(0, 0);
+		if(hit == Hit.DESTROYER)
+			System.out.println("Le " + ships[0].getName() + " est coulé.");
+		board.sendHit(5, 5);
 		board.print();
+	}
+	
+	public static void main(String[] args) {
+		testBoard();
 	}
 }
