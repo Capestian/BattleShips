@@ -30,7 +30,7 @@ public final class InputHelper {
 				String[] in = sin.nextLine().toLowerCase().split(" ");
 				if (in.length == 2 && in[1].length() == 1) {
 					String coord = in[0];
-					res.orientation = Orientation.getOrientation(in[1].charAt(0));
+					res.orientation = Orientation.fromCharacter(in[1].charAt(0));
 					if (res.orientation != null) {
 						res.x = coord.charAt(0) - 'a';
 						res.y = Integer.parseInt(coord.substring(1, coord.length())) - 1;

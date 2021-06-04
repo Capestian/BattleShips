@@ -20,7 +20,7 @@ public class Board implements IBoard {
 	private String name;
 	private int size;
 	private ShipState[][] ships;
-	private Boolean[][] hits;
+	private Hit[][] hits;
 
 	public Board(String name, int size) {
 		this.name = name;
@@ -29,19 +29,16 @@ public class Board implements IBoard {
 		else
 			this.size = size;
 		this.ships = new ShipState[this.size][this.size];
-		this.hits = new Boolean[this.size][this.size];
-		for (int i = 0; i < this.size; i++) {
-			for (int k = 0; k < this.size; k++) {
-				hits[i][k] = false;
-				ships[i][k] = new ShipState();
-			}
-		}
+		this.hits = new Hit[this.size][this.size];
 	}
 
 	public Board(String name) {
 		this(name, defaultSize);
 	}
-
+	
+	/**
+	 * Print the board
+	 */
 	public void print() {
 		StringBuffer s = new StringBuffer();
 		s.append("Navires :");
@@ -68,14 +65,17 @@ public class Board implements IBoard {
 				s.append(" ");
 			s.append(i + 1);
 			for (int k = 0; k < size; k++) {
-				s.append(" " + ships[k][i]);
+				if (ships[k][i] != null)
+					s.append(" " + ships[k][i]);
+				else
+					s.append(" " + seaChar);
 			}
 			s.append("    ");
 			if (i < 9)
 				s.append(" ");
 			s.append(i + 1);
 			for (int k = 0; k < size; k++) {
-				if (hits[k][i])
+				if (hits[k][i] != null)
 					s.append(" " + hitChar);
 				else
 					s.append(" " + seaChar);
@@ -85,11 +85,22 @@ public class Board implements IBoard {
 		System.out.println(s.toString());
 	}
 
+	/**
+	 * @return the size of the Board
+	 */
 	@Override
 	public int getSize() {
 		return this.size;
 	}
 
+	/**
+	 * put the given ship at the given coord
+	 *
+	 * @param ship The ship to place on the board
+	 * @param x The abscissa
+	 * @param y The ordinate
+	 * @throws BoardException
+	 */
 	@Override
 	public void putShip(AbstractShip ship, int x, int y) throws BoardException {
 		if (x < 0 && x >= size && y < 0 && y >= size)
@@ -99,77 +110,112 @@ public class Board implements IBoard {
 			if (y - ship.getLength() + 1 < 0)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x][y - i].getShip() != null)
+				if (ships[x][y - i] != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x][y - i].setShip(ship);
+				ships[x][y - i] = new ShipState(ship);
 			break;
 		case EAST:
 			if (x + ship.getLength() - 1 >= size)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x + i][y].getShip() != null)
+				if (ships[x + i][y] != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x + i][y].setShip(ship);
+				ships[x + i][y] = new ShipState(ship);
 			break;
 		case SOUTH:
 			if (y + ship.getLength() - 1 >= size)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x][y + i].getShip() != null)
+				if (ships[x][y + i] != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x][y + i].setShip(ship);
+				ships[x][y + i] = new ShipState(ship);
 			break;
 		case WEST:
 			if (x - ship.getLength() + 1 < 0)
 				throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				if(ships[x - i][y].getShip() != null)
+				if (ships[x - i][y] != null)
 					throw new BoardException();
 			for (int i = 0; i < ship.getLength(); i++)
-				ships[x - i][y].setShip(ship);
+				ships[x - i][y] = new ShipState(ship);
 			break;
 		}
 	}
 
+	/**
+	 * @param x The abscissa
+	 * @param y The ordinate
+	 * @return true if a ship is located at the given coords
+	 */
 	@Override
 	public boolean hasShip(int x, int y) {
-		return ships[x][y].getShip() != null;
+		return ships[x][y] != null;
 	}
 
+	/**
+	 * Set the state of the hit at a given position
+	 *
+	 * @param hit true if the hit must be set to successful
+	 * @param x The abscissa
+	 * @param y The ordinate
+	 */
 	@Override
-	public void setHit(boolean hit, int x, int y) {
-		ships[x][y].addStrike();
-		if(ships[x][y].isStruck())
-			hits[x][y] = true;
+	public void setHit(Hit hit, int x, int y) {
+		if (ships[x][y] != null)
+			ships[x][y].addStrike();
+		hits[x][y] = hit;
 	}
 
+	/**
+	 * Get the state of a hit at the given position
+	 *
+	 * @param x The abscissa
+	 * @param y The ordinate
+	 * @return
+	 */
 	@Override
-	public Boolean getHit(int x, int y) {
+	public Hit getHit(int x, int y) {
 		return hits[x][y];
 	}
 
+	/**
+	 * Sends a hit at the given position
+	 * 
+	 * @param x The abscissa
+	 * @param y The ordinate
+	 * @return status for the hit (eg : strike or miss)
+	 */
 	@Override
 	public Hit sendHit(int x, int y) {
-		setHit(true, x, y);
-		AbstractShip ship = ships[x][y].getShip();
-		if(ship == null)
-			return Hit.MISS;
-		if(!ship.isSunk())
-			return Hit.STIKE;
-		if(ship instanceof Destroyer)
-			return Hit.DESTROYER;
-		if(ship instanceof Submarine)
-			return Hit.SUBMARINE;
-		if(ship instanceof BattleShip)
-			return Hit.BATTLESHIP;
-		if(ship instanceof Carrier)
-			return Hit.CARRIER;
-		return null;
+		Hit hit = null;
+		if (ships[x][y] == null)
+			hit = Hit.MISS;
+		else {
+			ships[x][y].addStrike();
+			AbstractShip ship = ships[x][y].getShip();
+			if (!ship.isSunk())
+				hit = Hit.STIKE;
+			else {
+				if (ship instanceof Destroyer)
+					hit = Hit.DESTROYER;
+				if (ship instanceof Submarine)
+					hit = Hit.SUBMARINE;
+				if (ship instanceof BattleShip)
+					hit = Hit.BATTLESHIP;
+				if (ship instanceof Carrier)
+					hit = Hit.CARRIER;
+			}
+		}
+		hits[x][y] = hit;
+		return hit;
 	}
 
+	/**
+	 * test the class Board
+	 */
 	public static void testBoard() {
 		Board board = new Board("Bataille navale", 12);
 //		AbstractShip[] ships = { new Destroyer("Destroyer", 'd'), new Submarine("Submarine A", 's'), new Submarine("Submarine B", 's'), new BattleShip("BattleShip", 'b'), new Carrier("Carrier", 'c') };
@@ -194,12 +240,12 @@ public class Board implements IBoard {
 		board.sendHit(1, 0);
 		System.out.println(ships[0].isSunk());
 		Hit hit = board.sendHit(0, 0);
-		if(hit == Hit.DESTROYER)
+		if (hit == Hit.DESTROYER)
 			System.out.println("Le " + ships[0].getName() + " est coulé.");
 		board.sendHit(5, 5);
 		board.print();
 	}
-	
+
 	public static void main(String[] args) {
 		testBoard();
 	}

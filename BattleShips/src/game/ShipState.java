@@ -6,12 +6,9 @@ public class ShipState {
 	private AbstractShip ship;
 	private boolean struck;
 	
-	public ShipState() {
-		struck = false;
-	}
-	
-	public void setShip(AbstractShip ship) {
+	public ShipState(AbstractShip ship) {
 		this.ship = ship;
+		struck = false;
 	}
 	
 	public AbstractShip getShip() {
