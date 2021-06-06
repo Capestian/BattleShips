@@ -1,18 +1,25 @@
 package game;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 import ship.*;
 
 public class Game {
+	public static int BOARD_SIZE = 12;
+	public static int MAX_SHIPS = 8;
+	public static int MIN_SHIPS = 4;
+	
 	public static void main(String[] args) {
-		playerVSAI();
+//		playerVSAI();
+		AIAlone();
 	}
 	
 	public static void AIAlone() {
-		Board board = new Board("Bataille navale", 12);
+		Board board = new Board("Bataille navale", BOARD_SIZE);
 		BattleShipsAI ai = new BattleShipsAI(board, board);
 		List<AbstractShip> ships = new ArrayList<>();
 		ships.add(new Destroyer("Destroyer", 'd'));
@@ -48,20 +55,10 @@ public class Game {
 		Scanner sin = new Scanner(System.in);
 		System.out.println("Entrez le nom du joueur");
 		String name = sin.nextLine();
-		Board playerBoard = new Board(name, 12);
-		Board aiBoard = new Board("AI", 12);
-		List<AbstractShip> playerShips = new ArrayList<>();
-//		playerShips.add(new Destroyer("Destroyer", 'd'));
-//		playerShips.add(new Submarine("Submarine A", 's'));
-//		playerShips.add(new Submarine("Submarine B", 's'));
-//		playerShips.add(new BattleShip("BattleShip", 'b'));
-		playerShips.add(new Carrier("Carrier", 'c'));
-		List<AbstractShip> aiShips = new ArrayList<>();
-		aiShips.add(new Destroyer("Destroyer", 'd'));
-		aiShips.add(new Submarine("Submarine A", 's'));
-		aiShips.add(new Submarine("Submarine B", 's'));
-		aiShips.add(new BattleShip("BattleShip", 'b'));
-		aiShips.add(new Carrier("Carrier", 'c'));
+		Board playerBoard = new Board(name, BOARD_SIZE);
+		Board aiBoard = new Board("AI", BOARD_SIZE);
+		List<AbstractShip> playerShips = Arrays.asList(generateShips());
+		List<AbstractShip> aiShips = Arrays.asList(generateShips());
 		Player player = new Player(playerBoard, aiBoard, playerShips);
 		AIPlayer ai = new AIPlayer(aiBoard, playerBoard, aiShips);
 		aiBoard.print();
@@ -104,5 +101,33 @@ public class Game {
 			System.out.println("Victoire de l'IA");
 		if(ai.hasLost())
 			System.out.println("Victoire de " + name + ", félicitation");
+	}
+	
+	/**
+	 * Generate a array of random ships. The lenght is between MIN_SHIPS and MAX_SHIPS.
+	 * 
+	 * @return the array of ships
+	 */
+	public static AbstractShip[] generateShips() {
+		Random rnd = new Random();
+		int nb = rnd.nextInt(MAX_SHIPS - MIN_SHIPS + 1);
+		AbstractShip[] ships = new AbstractShip[nb + MIN_SHIPS - 1];
+		for(int i = 0; i < ships.length; i++) {
+			switch (rnd.nextInt(4)) {
+			case 1:
+				ships[i] = new Submarine("Sous-marin", 's');
+				break;
+			case 2:
+				ships[i] = new BattleShip("Croiseur", 'c');
+				break;
+			case 3:
+				ships[i] = new Carrier("Porte-avion", 'p');
+				break;
+			default:
+				ships[i] = new Destroyer("Frégate", 'd');
+				break;
+			}
+		}
+		return ships;
 	}
 }

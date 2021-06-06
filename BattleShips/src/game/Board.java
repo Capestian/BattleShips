@@ -16,7 +16,6 @@ public class Board implements IBoard {
 	public static Character hitChar = 'x';
 
 	// Attributes:
-	@SuppressWarnings("unused")
 	private String name;
 	private int size;
 	private ShipState[][] ships;
