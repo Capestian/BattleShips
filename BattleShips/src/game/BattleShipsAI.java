@@ -110,7 +110,6 @@ public class BattleShipsAI implements Serializable {
 			res = pickRandomCoord();
 		}
 		Hit hit = opponent.sendHit(res[0], res[1]);
-		board.setHit(hit, res[0], res[1]);
 		if (hit != Hit.MISS) {
 			if (lastStrike != null) {
 				lastVertical = guessOrientation(lastStrike, res);

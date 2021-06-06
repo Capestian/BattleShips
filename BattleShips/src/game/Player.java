@@ -9,12 +9,12 @@ public class Player {
 	protected Board opponentBoard;
 	protected int destroyedCount;
 	protected AbstractShip[] ships;
-	protected boolean lose;
 
 	public Player(Board board, Board opponentBoard, List<AbstractShip> ships) {
 		this.board = board;
 		this.ships = ships.toArray(new AbstractShip[0]);
 		this.opponentBoard = opponentBoard;
+		this.destroyedCount = 0;
 	}
 
 	/**
@@ -24,21 +24,21 @@ public class Player {
 	public void putShips() {
 		boolean done = false;
 		int i = 0;
-
 		do {
 			AbstractShip s = ships[i];
-			String msg = String.format("placer %d : %s(%d)", i + 1, s.getName(), s.getLength());
+			String msg = String.format("placer %d : %s(%d), sous la forme suivante: 'A0 n'", i + 1, s.getName(), s.getLength());
 			System.out.println(msg);
 			InputHelper.ShipInput res = InputHelper.readShipInput();
-			// TODO set ship orientation
-			// TODO put ship at given position
-
-			// TODO when ship placement successful
-			++i;
-			done = i == 5;
-
+			
+			try {
+				s.setOrientation(res.orientation);
+				board.putShip(s, res.x, res.y);
+				done = ++i >= ships.length;
+			} catch (Exception e) {
+				e.printStackTrace();
+				System.err.println("Impossible de placer le navire a cette position");
+			}
 			board.print();
-
 		} while (!done);
 	}
 
@@ -46,13 +46,18 @@ public class Player {
 		boolean done = false;
 		Hit hit = null;
 		do {
-
-			System.out.println("où frapper?");
+			System.out.println("A quelles coordonnées voulez-vous frapper ?");
 			InputHelper.CoordInput hitInput = InputHelper.readCoordInput();
-			// TODO call sendHit on this.opponentBoard
-
-			// TODO : Game expects sendHit to return BOTH hit result & hit coords.
-			// return hit is obvious. But how to return coords at the same time ?
+			coords[0] = hitInput.x;
+			coords[1] = hitInput.y;
+			if(coords[0] < 0 && coords[0] >= this.opponentBoard.getSize() && coords[1] < 0 && coords[1] >= this.opponentBoard.getSize())
+				System.out.println("Impossible de tirer à ces coordonnées");
+			else if(opponentBoard.getHit(hitInput.x, hitInput.y) != null)
+				System.out.println("Cette zone a déjà été touchée");
+			else {
+				hit = this.opponentBoard.sendHit(hitInput.x, hitInput.y);
+				done = true;
+			}
 		} while (!done);
 		return hit;
 	}
@@ -63,5 +68,13 @@ public class Player {
 
 	public void setShips(AbstractShip[] ships) {
 		this.ships = ships;
+	}
+	
+	public void loseAShip() {
+		destroyedCount++;
+	}
+	
+	public boolean hasLost() {
+		return destroyedCount >= ships.length;
 	}
 }

@@ -41,9 +41,10 @@ public class Board implements IBoard {
 	 */
 	public void print() {
 		StringBuffer s = new StringBuffer();
+		s.append(name + " :\n");
 		s.append("Navires :");
-		if (size > 3) {
-			for (int i = 3; i < size; i++) {
+		if (size > 2) {
+			for (int i = 2; i < size; i++) {
 				s.append("  ");
 			}
 		}
