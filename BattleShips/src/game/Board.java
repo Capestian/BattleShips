@@ -1,11 +1,7 @@
 package game;
 
 import game.InputHelper.ShipInput;
-import ship.AbstractShip;
-import ship.BattleShip;
-import ship.Carrier;
-import ship.Destroyer;
-import ship.Submarine;
+import ship.Ship;
 
 public class Board implements IBoard {
 	// Constants:
@@ -102,7 +98,7 @@ public class Board implements IBoard {
 	 * @throws BoardException
 	 */
 	@Override
-	public void putShip(AbstractShip ship, int x, int y) throws BoardException {
+	public void putShip(Ship ship, int x, int y) throws BoardException {
 		if (x < 0 && x >= size && y < 0 && y >= size)
 			throw new BoardException();
 		switch (ship.getOrientation()) {
@@ -195,17 +191,17 @@ public class Board implements IBoard {
 			hit = Hit.MISS;
 		else {
 			ships[x][y].addStrike();
-			AbstractShip ship = ships[x][y].getShip();
+			Ship ship = ships[x][y].getShip();
 			if (!ship.isSunk())
 				hit = Hit.STIKE;
 			else {
-				if (ship instanceof Destroyer)
+				if (ship.getLabel() == 'f')
 					hit = Hit.DESTROYER;
-				if (ship instanceof Submarine)
+				if (ship.getLabel() == 's')
 					hit = Hit.SUBMARINE;
-				if (ship instanceof BattleShip)
+				if (ship.getLabel() == 'c')
 					hit = Hit.BATTLESHIP;
-				if (ship instanceof Carrier)
+				if (ship.getLabel() == 'p')
 					hit = Hit.CARRIER;
 			}
 		}
@@ -219,12 +215,12 @@ public class Board implements IBoard {
 	public static void testBoard() {
 		Board board = new Board("Bataille navale", 12);
 //		AbstractShip[] ships = { new Destroyer("Destroyer", 'd'), new Submarine("Submarine A", 's'), new Submarine("Submarine B", 's'), new BattleShip("BattleShip", 'b'), new Carrier("Carrier", 'c') };
-		AbstractShip[] ships = { new Destroyer("Destroyer", 'd') };
+		Ship[] ships = { Ship.getDestroyer() };
 		int i = 0;
 		boolean done = false;
 		board.print();
 		do {
-			AbstractShip s = ships[i];
+			Ship s = ships[i];
 			System.out.println("Entrez l'emplacement du navire '" + s.getName() + "', sous la forme suivante: 'A0 n'");
 			ShipInput res = InputHelper.readShipInput();
 			try {

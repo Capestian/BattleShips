@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Random;
 
-import ship.AbstractShip;
+import ship.Ship;
 import ship.Orientation;
 
 @SuppressWarnings("serial")
@@ -53,10 +53,10 @@ public class BattleShipsAI implements Serializable {
 	 * 
 	 * @param ships the ships to put
 	 */
-	public void putShips(List<AbstractShip> ships) {
+	public void putShips(List<Ship> ships) {
 		int x, y;
 		Random rnd = new Random();
-		for (AbstractShip s : ships) {
+		for (Ship s : ships) {
 			do {
 				s.setOrientation(Orientation.fromInt(rnd.nextInt(Orientation.values().length)));
 				x = rnd.nextInt(board.getSize());
@@ -126,7 +126,7 @@ public class BattleShipsAI implements Serializable {
 	 * *** Private
 	 */
 
-	private boolean canPutShip(AbstractShip ship, int x, int y) {
+	private boolean canPutShip(Ship ship, int x, int y) {
 		Orientation o = ship.getOrientation();
 		int dx = 0, dy = 0;
 		if (o == Orientation.EAST) {

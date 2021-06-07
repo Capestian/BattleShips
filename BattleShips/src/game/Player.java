@@ -2,17 +2,17 @@ package game;
 
 import java.util.List;
 
-import ship.AbstractShip;
+import ship.Ship;
 
 public class Player {
 	protected Board board;
 	protected Board opponentBoard;
 	protected int destroyedCount;
-	protected AbstractShip[] ships;
+	protected Ship[] ships;
 
-	public Player(Board board, Board opponentBoard, List<AbstractShip> ships) {
+	public Player(Board board, Board opponentBoard, List<Ship> ships) {
 		this.board = board;
-		this.ships = ships.toArray(new AbstractShip[0]);
+		this.ships = ships.toArray(new Ship[0]);
 		this.opponentBoard = opponentBoard;
 		this.destroyedCount = 0;
 	}
@@ -25,7 +25,7 @@ public class Player {
 		boolean done = false;
 		int i = 0;
 		do {
-			AbstractShip s = ships[i];
+			Ship s = ships[i];
 			String msg = String.format("placer %d : %s(%d), sous la forme suivante: 'A0 n'", i + 1, s.getName(), s.getLength());
 			System.out.println(msg);
 			InputHelper.ShipInput res = InputHelper.readShipInput();
@@ -62,11 +62,11 @@ public class Player {
 		return hit;
 	}
 
-	public AbstractShip[] getShips() {
+	public Ship[] getShips() {
 		return ships;
 	}
 
-	public void setShips(AbstractShip[] ships) {
+	public void setShips(Ship[] ships) {
 		this.ships = ships;
 	}
 	

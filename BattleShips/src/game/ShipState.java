@@ -1,17 +1,17 @@
 package game;
 
-import ship.AbstractShip;
+import ship.Ship;
 
 public class ShipState {
-	private AbstractShip ship;
+	private Ship ship;
 	private boolean struck;
 	
-	public ShipState(AbstractShip ship) {
+	public ShipState(Ship ship) {
 		this.ship = ship;
 		struck = false;
 	}
 	
-	public AbstractShip getShip() {
+	public Ship getShip() {
 		return ship;
 	}
 	

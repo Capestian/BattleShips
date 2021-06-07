@@ -1,6 +1,6 @@
 package game;
 
-import ship.AbstractShip;
+import ship.Ship;
 
 public interface IBoard {
 
@@ -17,7 +17,7 @@ public interface IBoard {
      * @param y
      * @throws BoardException 
      */
-    void putShip(AbstractShip ship, int x, int y) throws BoardException;
+    void putShip(Ship ship, int x, int y) throws BoardException;
 
     /**
      * @param x

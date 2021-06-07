@@ -21,12 +21,12 @@ public class Game {
 	public static void AIAlone() {
 		Board board = new Board("Bataille navale", BOARD_SIZE);
 		BattleShipsAI ai = new BattleShipsAI(board, board);
-		List<AbstractShip> ships = new ArrayList<>();
-		ships.add(new Destroyer("Destroyer", 'd'));
-		ships.add(new Submarine("Submarine A", 's'));
-		ships.add(new Submarine("Submarine B", 's'));
-		ships.add(new BattleShip("BattleShip", 'b'));
-		ships.add(new Carrier("Carrier", 'c'));
+		List<Ship> ships = new ArrayList<>();
+		ships.add(Ship.getDestroyer());
+		ships.add(Ship.getSubmarine());
+		ships.add(Ship.getSubmarine());
+		ships.add(Ship.getBattleShip());
+		ships.add(Ship.getCarrier());
 		ai.putShips(ships);
 		int wreckCounter = 0;
 		Hit hit;
@@ -57,8 +57,8 @@ public class Game {
 		String name = sin.nextLine();
 		Board playerBoard = new Board(name, BOARD_SIZE);
 		Board aiBoard = new Board("AI", BOARD_SIZE);
-		List<AbstractShip> playerShips = Arrays.asList(generateShips());
-		List<AbstractShip> aiShips = Arrays.asList(generateShips());
+		List<Ship> playerShips = Arrays.asList(generateShips());
+		List<Ship> aiShips = Arrays.asList(generateShips());
 		Player player = new Player(playerBoard, aiBoard, playerShips);
 		AIPlayer ai = new AIPlayer(aiBoard, playerBoard, aiShips);
 		aiBoard.print();
@@ -108,23 +108,23 @@ public class Game {
 	 * 
 	 * @return the array of ships
 	 */
-	public static AbstractShip[] generateShips() {
+	public static Ship[] generateShips() {
 		Random rnd = new Random();
 		int nb = rnd.nextInt(MAX_SHIPS - MIN_SHIPS + 1);
-		AbstractShip[] ships = new AbstractShip[nb + MIN_SHIPS - 1];
+		Ship[] ships = new Ship[nb + MIN_SHIPS - 1];
 		for(int i = 0; i < ships.length; i++) {
 			switch (rnd.nextInt(4)) {
 			case 1:
-				ships[i] = new Submarine("Sous-marin", 's');
+				ships[i] = Ship.getDestroyer();
 				break;
 			case 2:
-				ships[i] = new BattleShip("Croiseur", 'c');
+				ships[i] = Ship.getSubmarine();
 				break;
 			case 3:
-				ships[i] = new Carrier("Porte-avion", 'p');
+				ships[i] = Ship.getBattleShip();
 				break;
 			default:
-				ships[i] = new Destroyer("Frégate", 'd');
+				ships[i] = Ship.getCarrier();
 				break;
 			}
 		}
